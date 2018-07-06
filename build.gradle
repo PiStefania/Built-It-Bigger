@@ -20,3 +20,30 @@ allprojects {
         google()
     }
 }
+
+task runServer{
+    dependsOn ":backend:appengineStart"
+    doLast {
+        println "Server started"
+    }
+}
+
+task stopServer{
+    dependsOn ":backend:appengineStop"
+    mustRunAfter "executeTests"
+    doLast {
+        println "Server stopped"
+    }
+}
+
+task executeTests {
+    dependsOn "app:connectedAndroidTest"
+    mustRunAfter "runServer"
+    doLast {
+        println "Tests executed"
+    }
+}
+
+task GCETest {
+    dependsOn = ["runServer", "executeTests", "stopServer"]
+}

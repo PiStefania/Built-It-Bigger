@@ -1,7 +1,5 @@
 package com.udacity.gradle.builditbigger;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -12,14 +10,12 @@ import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
 
-class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
-    private static final String JOKE_EXTRA = "Joke_Extra";
-
+    private EndpointsAsyncTaskListener mListener = null;
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(Void... params) {
         if(myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
@@ -35,8 +31,6 @@ class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
-
         try {
             return myApiService.tellAJoke().execute().getData();
         } catch (IOException e) {
@@ -46,8 +40,17 @@ class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Intent jokeIntent = new Intent(context, com.example.android.displayjokelibrary.MainActivity.class);
-        jokeIntent.putExtra(JOKE_EXTRA,result);
-        context.startActivity(jokeIntent);
+        if (this.mListener != null)
+            this.mListener.onComplete(result);
+    }
+
+    public EndpointsAsyncTask setListener(EndpointsAsyncTaskListener listener) {
+        this.mListener = listener;
+        return this;
+    }
+
+
+    public interface EndpointsAsyncTaskListener {
+        void onComplete(String jokeStr);
     }
 }

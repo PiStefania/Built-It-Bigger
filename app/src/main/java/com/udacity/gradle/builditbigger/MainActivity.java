@@ -1,15 +1,22 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.udacity.gradle.builditbigger.IdlingResource.SimpleIdlingResource;
+
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private static final String JOKE_EXTRA = "Joke_Extra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        new EndpointsAsyncTask().execute(this);
+        EndpointsAsyncTask task = new EndpointsAsyncTask();
+        task.setListener(new EndpointsAsyncTask.EndpointsAsyncTaskListener() {
+            @Override
+            public void onComplete(String jokeString) {
+                Intent jokeIntent = new Intent(MainActivity.this, com.example.android.displayjokelibrary.MainActivity.class);
+                jokeIntent.putExtra(JOKE_EXTRA,jokeString);
+                startActivity(jokeIntent);
+            }
+        }).execute();
+    }
+
+    //for testing
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
     }
 }

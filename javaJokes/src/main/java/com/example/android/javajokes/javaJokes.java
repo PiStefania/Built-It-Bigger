@@ -9,7 +9,7 @@ public class javaJokes {
     private static final String LOG_TAG = javaJokes.class.getSimpleName();
 
     public javaJokes() {
-        jokes = new ArrayList<String>();
+        jokes = new ArrayList<>();
         jokes.add("What kind of music are balloons afraid of? Pop Music");
         jokes.add("I had my credit card stolen the other day but I didn't bother to report it because the thief spends less than my wife.");
         jokes.add("To this day, the boy that used to bully me at school still takes my lunch money. On the plus side, he makes great Subway sandwiches.");
@@ -27,5 +27,9 @@ public class javaJokes {
         Random r = new Random();
         int position = r.nextInt(jokes.size());
         return jokes.get(position);
+    }
+
+    public ArrayList<String> getJokes() {
+        return jokes;
     }
 }
