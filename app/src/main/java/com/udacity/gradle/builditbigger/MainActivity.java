@@ -1,5 +1,6 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,9 +53,7 @@ public class MainActivity extends AppCompatActivity {
         task.setListener(new EndpointsAsyncTask.EndpointsAsyncTaskListener() {
             @Override
             public void onComplete(String jokeString) {
-                Intent jokeIntent = new Intent(MainActivity.this, com.example.android.displayjokelibrary.MainActivity.class);
-                jokeIntent.putExtra(JOKE_EXTRA,jokeString);
-                startActivity(jokeIntent);
+                startActivity(newIntent(MainActivity.this,jokeString));
             }
         }).execute();
     }
@@ -70,5 +69,11 @@ public class MainActivity extends AppCompatActivity {
             mIdlingResource = new SimpleIdlingResource();
         }
         return mIdlingResource;
+    }
+
+    public static Intent newIntent(Context context, String jokeString) {
+        Intent jokeIntent = new Intent(context, com.example.android.displayjokelibrary.MainActivity.class);
+        jokeIntent.putExtra(JOKE_EXTRA,jokeString);
+        return jokeIntent;
     }
 }
